@@ -1,200 +1,105 @@
 const canvas = document.getElementById("art-canvas");
 const ctx = canvas.getContext("2d");
 
-var CANVAS_WIDTH = window.innerWidth;
-var CANVAS_HEIGHT = window.innerHeight;
+const fpsInterval = 1000 / 60;
+var then = Date.now();
 
-window.onresize = function() {
-	CANVAS_WIDTH = window.innerWidth;
-	CANVAS_HEIGHT = window.innerHeight;
+var stars = [];
+const mouse = {
+	x: canvas.width / 2,
+	y: canvas.height / 2
+};
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function initStars(){
+	for (var i = 0; i < Math.round((canvas.width / canvas.height) * 40); i++){
+		stars.push({
+			coords: {
+				x: Math.floor(Math.random() * canvas.width),
+				y: Math.floor(Math.random() * canvas.height)
+			},
+			speed: {
+				x: Math.random() < 0.5 ? -(Math.random() * 2) : Math.random() * 2,
+				y: Math.random() < 0.5 ? -(Math.random() * 2): Math.random() * 2
+			},
+			metMouse: false
+		});
+	}
 }
 
-canvas.width = CANVAS_WIDTH;
-canvas.height = CANVAS_HEIGHT;
+window.onresize = function(){
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	stars = [];
+	initStars();
+};
 
-const boxSize = 35;
-const SHADOW = "rgba(0, 0, 0, 0.3)";
-const YELLOW_BLOCK = 1;
-const RED_BLOCK = 2;
+window.addEventListener("mousemove", e => {
+	mouse.x = e.clientX;
+	mouse.y = e.clientY;
+});
 
-const TANK_WIDTH = 43;
-const TANK_HEIGHT = 33;
+initStars();
 
-//credit to https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
-function hexToRgbA(hex, opacity){
-    var c;
-    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-    c= hex.substring(1).split('');
-       	if(c.length== 3){
-          	c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-       	}
-       c= '0x'+c.join('');
-       return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',' + opacity + ')';
-   	}
- 	throw new Error(`Bad Hex: ${hex}`);
-}
+function step(){
+	var now = Date.now();
+	var elapsed = now - then;
 
-class Splotch {
-	constructor(x, y, side, kind) {
-		this.side = side;
-		this.x = x;
-		this.y = y;
+	if (elapsed > fpsInterval){
+		then = now - (elapsed % fpsInterval);
+		for (var i = 0; i < stars.length; i++){
+			const mouseDist = Math.sqrt(Math.pow(stars[i].coords.x - mouse.x, 2) + Math.pow(stars[i].coords.y - mouse.y, 2));
+			stars[i].coords.x += stars[i].speed.x;
+			stars[i].coords.y += stars[i].speed.y;
 
-		if (kind == YELLOW_BLOCK) {
-			//light orange-brown
-			this.color = "#C2995D";
-		} else {
-			//very light red
-			this.color = "#FF8A73";
+			if (stars[i].coords.x > canvas.width || stars[i].coords.x < 0 || stars[i].coords.y > canvas.height || stars[i].coords.y < 0){
+				stars[i].coords.x = Math.floor(Math.random() * canvas.width);
+				stars[i].coords.y = Math.floor(Math.random() * canvas.height);
+				stars[i].speed.x = Math.random() < 0.5 ? -(Math.random() * 2) : Math.random() * 2;
+				stars[i].speed.y = Math.random() < 0.5 ? -(Math.random() * 2) : Math.random() * 2;
+			}
+
+			if (mouseDist < 80 && !stars[i].metMouse){
+				stars[i].speed.x *= -10;
+				stars[i].speed.y *= -10;
+				stars[i].metMouse = true;
+			} else if (mouseDist > 80 && stars[i].metMouse){
+				stars[i].speed.x = stars[i].speed.x < 0 ? -(Math.random() * 2) : Math.random() * 2;
+				stars[i].speed.y = stars[i].speed.y < 0 ? -(Math.random() * 2) : Math.random() * 2;
+				stars[i].metMouse = false;
+			}
 		}
 	}
 
-	render(opacity) {
-		ctx.shadowBlur = 10;
-		ctx.shadowColor = hexToRgbA(this.color, opacity);
-		ctx.fillStyle = hexToRgbA(this.color, opacity);
-		ctx.fillRect(this.x, this.y, this.side, this.side);
-		ctx.shadowBlur = 0;
-	}
-}
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-class Block {
-	constructor(x, y) {
-		//block decor
-		this.splotches = [];
+	for (var i = 0; i < stars.length; i++){
+		ctx.beginPath();
+		ctx.arc(stars[i].coords.x, stars[i].coords.y, 2.5, 0, 2 * Math.PI, false);
+		ctx.fillStyle = "white";
+		ctx.fill();
 
-		this.width = boxSize;
-		this.height = boxSize
-		this.x = x * boxSize;
-		this.y = y * boxSize;
-		this.opacity = 1;
-		this.kind = Math.random() > 0.6 ? RED_BLOCK : YELLOW_BLOCK;
+		for (var s = 0; s < stars.length; s++){
+			const dist = Math.sqrt(Math.pow(stars[s].coords.x - stars[i].coords.x, 2) + Math.pow(stars[s].coords.y - stars[i].coords.y, 2));
+			var ratio = (canvas.width / canvas.height) * 70;
 
-		if (this.kind == YELLOW_BLOCK) {
-			this.color = "#967748";
-		} else {
-			this.color = "#B54B44";
-		}
+			ratio < 90 ? ratio = 90 : ratio = ratio;
+			if (dist < ratio){
+				ctx.strokeStyle = "white";
+				ctx.lineWidth = 0.02 * ((ratio - dist) / 4);
 
-		//randomly generate 2 splotches
-		for (var i = 0; i < 2; i++) {
-			this.splotches.push(new Splotch(this.x + Math.floor(Math.random() * this.width / 1.4), this.y + Math.floor(Math.random() * this.height / 1.4), Math.floor(Math.random() * this.width / 3) + 2, this.kind));
-		}
-	}
-
-	render() {
-		//fill in block
-		ctx.shadowBlur = 1;
-		ctx.shadowColor = SHADOW;
-		ctx.fillStyle = SHADOW;
-		ctx.fillRect(this.x + 5, this.y + 5, this.width, this.height);
-		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
-		ctx.fillRect(this.x, this.y, this.width, this.height);
-		ctx.shadowBlur = 0;
-
-		//render splotches
-		for (var i = 0; i < this.splotches.length; i++) {
-			this.splotches[i].render(this.opacity, ctx);
-		}
-	}
-}
-
-function dtr(degree) {
-	return degree * Math.PI / 180;
-}
-
-class Tank {
-	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, opacity) {
-		//body
-		this.width = TANK_WIDTH;
-		this.height = TANK_HEIGHT;
-		this.turretBaseSide = 19;
-		this.turretNozzleWidth = 21;
-		this.turretNozzleHeight = 10;
-
-		//tank info
-		this.x = x
-		this.y = y;
-		this.centerX = this.x + this.width / 2;
-		this.centerY = this.y + this.height / 2;
-		this.angle = angle;
-		this.turretAngle = turretAngle;
-
-		//colliding?
-		this.colliding = false;
-
-		//opacity
-		this.opacity = opacity;
-
-		//colors of the tank
-		this.color = hexToRgbA(color, this.opacity);
-		this.turretColor = hexToRgbA(turretColor, this.opacity);
-		this.sideColor = hexToRgbA(sideColor, this.opacity);
-	}
-
-	render() {
-		ctx.shadowBlur = 3;
-		ctx.shadowColor = this.color;
-
-		this.renderShadow();
-
-		//draw tank
-		ctx.save();
-
-		ctx.translate(this.centerX, this.centerY);
-		ctx.rotate(this.angle);
-
-		//DRAW TANK BASE//		
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
-
-		//DRAW TANK SIDES//
+				ctx.beginPath();
+				ctx.moveTo(stars[i].coords.x, stars[i].coords.y);
+				ctx.lineTo(stars[s].coords.x, stars[s].coords.y);
+				ctx.stroke();
+			}
 			
-		//WHEELS
-		ctx.fillStyle = this.sideColor;
-
-		//left wheel
-		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height / 5);
-
-		//right wheel
-		ctx.fillRect(this.width / -2, this.height / 3, this.width, this.height / 5);
-
-		ctx.restore();
-
-		ctx.save();
-
-		//DRAW TURRET//
-		ctx.translate(this.centerX, this.centerY);
-		ctx.rotate(this.turretAngle);
-		ctx.lineWidth = 3;
-		ctx.strokeStyle = hexToRgbA("#000000", this.opacity);
-
-		ctx.shadowBlur = 20;
-		ctx.shadowColor = this.color;
-
-		//turret base
-		ctx.fillStyle = this.turretColor;
-		ctx.strokeRect(this.turretBaseSide / -2, this.turretBaseSide / -2, this.turretBaseSide, this.turretBaseSide);
-		ctx.fillRect(this.turretBaseSide / -2, this.turretBaseSide / -2, this.turretBaseSide, this.turretBaseSide);
-
-		//turret nozzle
-		ctx.fillStyle = this.turretColor;
-		ctx.strokeRect(this.turretNozzleWidth / 2, this.turretNozzleHeight / -2, this.turretNozzleWidth, this.turretNozzleHeight);
-		ctx.fillRect(this.turretNozzleWidth / 2, this.turretNozzleHeight / -2, this.turretNozzleWidth, this.turretNozzleHeight);
-
-		ctx.restore();
-		ctx.shadowBlur = 0;
+		}
 	}
 
-	renderShadow() {
-		ctx.save();
-
-		ctx.translate(this.centerX + 5, this.centerY + 5);
-		ctx.rotate(this.angle);
-
-		ctx.fillStyle = SHADOW;
-		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
-
-		ctx.restore();
-	}
+	requestAnimationFrame(step);
 }
+
+requestAnimationFrame(step);
