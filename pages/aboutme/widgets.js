@@ -1,5 +1,5 @@
-const widgets = document.getElementsByClassName("socials-widget");
-const links = [
+var widgets = document.getElementsByClassName("socials-widget");
+var links = [
     "https://www.youtube.com/channel/UCMSxqPXVnR4ogZLEtFefnZQ",
     "https://www.instagram.com/dkeskee/",
     "https://github.com/DkeRee"
