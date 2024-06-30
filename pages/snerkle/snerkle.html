@@ -1,0 +1,28 @@
+<link href = "pages/pageStyle.css" rel = "stylesheet" type = "text/css">
+<div class = "content-wrapper">
+    <div class = "sector text-sector lean-left">
+        <p class = "description no-touch no-padding">
+            "Curiosity killed the cat" is something I hear an awful lot. Though, it's not necessarily a bad thing to be wary.
+            Curiosity killed my phone's battery life. I was curious about whether I could apply the Negamax chess engine search algorithm into a classic snake game.
+            This was right after a Cross Country race in the bus, and I spent up the remainder of my phone's battery life looking through how I could possibly do this.
+            I had to phone home that night. Though, in the end, I did make it work. I'm proud to say that I had to nerf the bot chasing after you because it was too overpowered.
+            I set the player up as one moving yellow pixel, which has to eat blue pixels to gain points. Your goal is to gain as many points as possible before you die by crashing into the wall, block, or snake.
+            The catch is that for every pixel you eat, the snake gets bigger. This project also doubled as my experiment with Perlin Noise, an algorithm that can generate random terrain. The maps in this game are randomly generated through this algorithm.
+
+        </p>
+    </div>
+    <div class = "sector pic-wrapper">
+        <div class = "img img-button" style = "background-image: url('img/snerkle.png');">
+            <div class = "play-button">
+                <h2 class = "play-button-text">PLAY</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var playButton = document.getElementsByClassName("play-button")[0];
+
+    playButton.addEventListener("mousedown", () => {
+        window.open("https://dkeree.github.io/Snerkle/", "_blank");
+    });
+</script>
