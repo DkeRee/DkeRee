@@ -16,7 +16,7 @@
 
 #banner {
 	position: absolute;
-	background-image: url("/img/banner.png");
+	background-image: url("img/banner.png");
 	background-repeat: no-repeat;
 	background-size: cover;
 	border-radius: 8px 8px 0 0;
