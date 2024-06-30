@@ -54,6 +54,7 @@ body {
 
 /* sections */
 .section {
+	padding: 5px;
 }
 
 #selector-container {
@@ -114,6 +115,25 @@ body {
 	pointer-events: none;
 	user-select: none;
 	white-space: nowrap;
+}
+
+#content {
+	margin-top: 30px;
+}
+
+.content-text {
+	font-family: 'Poppins', sans-serif;
+	font-size: 20px;
+	color: white;
+	margin: 0;
+	padding: auto;
+	pointer-events: none;
+	user-select: none;
+}
+
+.img-wrapper {
+	display: flex;
+	justify-content: center;
 }
 
 @keyframes rainbow_animation {

@@ -1,0 +1,9 @@
+.content-wrapper {
+	display: flex;
+	justify-content: center;
+}
+
+.card {
+    border-radius: 5%;
+    background-color: #23272A;
+}
