@@ -1,7 +1,7 @@
 const widgets = document.getElementsByClassName("socials-widget");
 const links = [
     "https://www.youtube.com/channel/UCMSxqPXVnR4ogZLEtFefnZQ",
-    "https://www.instagram.com/dakkerware/",
+    "https://www.instagram.com/dkeskee/",
     "https://github.com/DkeRee"
 ];
 
