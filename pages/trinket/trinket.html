@@ -1,0 +1,89 @@
+<link href = "pages/pageStyle.css" rel = "stylesheet" type = "text/css">
+<div class = "content-wrapper">
+    <div class = "sector pic-wrapper">
+        <div class = "img img-button" style = "background-image: url('img/trinketlogo.png');">
+            <div class = "play-button">
+                <h2 class = "play-button-text">LINK</h2>
+            </div>
+        </div>
+    </div>
+    <div class = "sector text-sector lean-right">
+        <p class = "description no-touch no-padding">
+            I remember first playing Chess during elementary school in the library against a good friend of mine.
+            As elementary schoolers, we didn't know how the game really worked. We would "eat" each other's kings when one of us played an illegal move in CHECK! It was like Uno where if we caught the other person playing an illegal move, we would win.
+            Though, even with these weird rules, I'm going to get straight to it: I was pretty bad. 
+            I kept on getting checkmated, or, er, check-eated. What I remember most vividly, though, is my friend pulling the Scholar's mate on me. It is a swift queen movement early on in the game, which I was unable to punish with my lack of experience (silly me! I had all 8 years of my life to train!).
+            In the end, I kept thinking to myself: was there any way to tell what the ACTUAL BEST move is?
+        </p>
+    </div>
+</div>
+<div class = "content-wrapper">
+    <div class = "sector text-sector lean-left">
+        <p class = "description no-touch no-padding">
+            Now, with 5+ years of programming experience, I know the answer: just make a darn Chess Engine. 
+            Well, truthfully, it's a little more complicated than that. Chess engines like StockFish have gone through years of rigorous testing to refine every part of its search algorith, board representation, and more.
+            My chess engine, Trinket, hovers around the 2500-2600 CCRL chess engine elo pool range as opposed to the striking 3800 that StockFish holds. Though, the drive to make up that gap is what makes this project so fun.
+            Since there's nothing much to talk about a chess engine, I might as well start talking about how one works.
+        </p>
+    </div>
+    <div class = "sector pic-wrapper">
+        <div class = "img" style = "background-image: url('img/enginelist.png');"></div>
+    </div>
+</div>
+<div class = "content-wrapper">
+    <div class = "sector pic-wrapper">
+        <div class = "img" style = "background-image: url('img/openbench.png');"></div>
+    </div>
+    <div class = "sector text-sector lean-right">
+        <p class = "description no-touch no-padding">
+            Though, before I get into that, I must give credit where credit is due. This would not have been possible without help from MinusKelvin and Analog Hors.
+            It is impossible to get all the information you need to program something as big as a chess engine in one place. You need to get in touch with other people. 
+            They both taught me the basics of a chess engine when I was new to the community and even invited me into their private OpenBench (made by Andrew Grant) server to properly test patches for elo gain or loss with the SPRT LLR statistical algorithm.
+        </p>
+    </div>
+</div>
+<div class = "content-wrapper">
+    <div class = "sector text-sector lean-left">
+        <p class = "description no-touch no-padding">
+            A chess engine is a massive project. The idea behind each algorithm isn't too hard to grasp, but putting everything together is a feat on its own.
+            First off, a chess interface like Cute Chess or Lichess will give in commands through the UCI, which stands for Universal Chess Interface. It is basically the language that chess engines speak (like English or Spanish 🤨).
+            It is through the UCI that each engine can communicate with each other about whether to start a search, abort a search, or print out additional information behind each search.
+            Previously, XBoard was used instead. After processing the proper UCI command with a given FEN (board position) and TC (time control) it will execute a search, which will abort based on that time control. This is why it is literally impossible for humans to beat chess engines in a hyperbullet chess match (they will play moves in milliseconds)!
+            Here, iterative deepening is used to search as deep as it CAN get with the given time control. 
+        </p>
+    </div>
+    <div class = "sector pic-wrapper">
+        <div class = "img" style = "background-image: url('img/trinketmakeup.png');"></div>
+    </div>
+</div>
+<div class = "content-wrapper">
+    <div class = "sector pic-wrapper">
+        <div class = "img" style = "background-image: url('img/trinketreadme.png');"></div>
+    </div>
+    <div class = "sector text-sector lean-right">
+        <p class = "description no-touch no-padding">
+            Unlike popular belief, accuracy does not run proportional to depth. An increase of depth can allow the chess engine to search further, but it may search less accurately. 
+            This is why chess engines are a fine balance between accuracy and pruning. Within the engine, it will either use Negamax w/ alpha-beta framework or Monte-Carlo to search (both run parallel to DFS). Trinket uses the former.
+            Within this search, it will access a function to statically evaluate positions using HCE (hand crafted evaluation). Stronger engines like StockFish uses NNUE (neural network).
+            Other implentations include the transposition table, sorting algorithm to speed up alpha-beta pruning, and of course, bitboard for board representation (courtesy of Analog Hors).
+            Though, as you can see from Trinket's readme on Github, as shown on the left, there are many more implementations that I will not get into for the sake of simplicity.
+            If you take interest in chess engine development, I highly suggest you check out the official Chess Programming Wiki. Though, do note it is a little bit outdated.
+            For instance, its Texel Tuning implementation is not the greatest. (It's like O(n^2)!)
+        </p>
+    </div>
+</div>
+<div class = "content-wrapper">
+    <div class = "sector text-sector lean-left">
+        <p class = "description no-touch no-padding">
+            The negamax algorithm is derived from the minimax algorithm. It is more popular since you no longer need to provide two different chunks of code for the same application to account for whether the current node is minimizing or maximizing.
+            It takes the alpha beta window and flips it (alpha, beta) -> (-beta, -alpha) per ply down the tree. This way, in each node, you can assume implementation in the eyes of the maximizer.
+            Alpha is best score returned from the perspective of the current node. Beta is the best score that the parent of the current node has (which is, in the persepctive of negamax, will be minimizing!). 
+            Alpha-beta pruning works as follows: If alpha >= beta, we stop looking at all further propogation in the current node and eliminate it from the search tree. We can do this because if beta is the lowest score that our parent can find thus far, we KNOW that it will not accept a value (alpha) that is higher or equal to that. Since we are trying to only go for scores that are higher than the one we already have, all the future scores which WE will accept will be greater than what our PARENT will accept. 
+            Thus, we can stop searching further in this node (hence pruning).
+        </p>
+    </div>
+    <div class = "sector pic-wrapper">
+        <div class = "img" style = "background-image: url('img/negamax.gif');"></div>
+    </div>
+</div>
+<script src = "pages/trinket/widgets.js"></script>
