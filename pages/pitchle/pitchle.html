@@ -1,0 +1,44 @@
+<link href = "pages/pageStyle.css" rel = "stylesheet" type = "text/css">
+<div class = "content-wrapper">
+    <div class = "sector text-sector lean-left">
+        <p class = "description no-touch no-padding">
+            Pitchle is heavily inspired by a minigame in the Wii Play disk of the Wii, which my dad bought for me when I was little. 
+            You would pop these bubbles by matching your character to it, and I would always be captivated by the simplicity of this minigame.
+            Years later, I decided to use this concept to develop Pitchle to help kids with ADHD focus easier while training their pitch sense on the Level 10 CAPMT piano test by turning the process into an interactive game, which you can customize to your liking!
+            As a pianist, I have gone through the struggles of learning pitch sense for this test, and I know that it is much harder for those who struggle to concentrate, much like early self.
+            Therefore, through this, my journey in coding and playing the piano have crossed paths due to my will of helping others walk the path I once did step by step.
+            Some may need a couple more steps, and I am glad to help them fill that in.
+        </p>
+    </div>
+    <div class = "sector pic-wrapper">
+        <div class = "img img-button" style = "background-image: url('img/mainPitchle.png');">
+            <div class = "play-button">
+                <h2 class = "play-button-text">PLAY</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<div class = "content-wrapper">
+    <div class = "sector pic-wrapper">
+        <div class = "img" style = "background-image: url('img/pitchleFrontScreen.png');"></div>
+    </div>
+    <div class = "sector text-sector lean-right">
+        <p class = "description no-touch no-padding">
+            As of now, you can easily select between 15 different modes to practice the different scales you need the most work on.
+            Each mode has varying difficulty with different amount of set lives, number of rounds and bubbles that spawn in each round, bubble falling speed, and the amount of different notes you are tested on.
+            After you select a mode, the game will start, and if you want to end the round early, all you have to do is press "E" on your keyboard.
+            To play the game, you have to hover your circular fun-neon-lit cursor over to the bubble and then LISTEN CLOSELY to the note that is being played.
+            Use keys Z or X to switch between UP and DOWN on the selected guessing note on the left column. Use arrow keys LEFT and RIGHT to switch between NATURAL, SHARP, or FLAT harmonics. Note program will automatically convert notes that match up the same way in different harmonics!
+            Once you believe you have guessed correctly, click on the bubble! If you are right, it will pop. If you are incorrect, it will notify you through a quirky, fun red jiggle.
+            Don't let the bubbles reach the bottom of your screen or your life will take a hit!
+            Now go and have fun! Though, also do note that basic music theory is necessary for you to understand the different types of notations and alphabetic notes :)
+        </p>
+    </div>
+</div>
+<script>
+    var playButton = document.getElementsByClassName("play-button")[0];
+
+    playButton.addEventListener("mousedown", () => {
+        window.open("https://dkeree.github.io/Pitchle", "_blank");
+    });
+</script>
